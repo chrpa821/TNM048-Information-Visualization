@@ -47,32 +47,51 @@ function focusPlusContext(data) {
      * Task 1 - Parse date with timeParse to year-month-day
      */
 
+    var parseDate = d3.timeParse("%Y-%m-%d");
+
     /**
      * Task 2 - Define scales and axes for scatterplot
      */
+
+    var xScale = d3.scaleTime().range([0,width]);
+    var yScale = d3.scaleLinear().range([0, height]);
+    var xAxis = d3.axisBottom(xScale);
+    var yAxis = d3.axisLeft(yScale);
 
     /**
      * Task 3 - Define scales and axes for context (Navigation through the data)
      */
 
+    var navXScale = d3.scaleTime().range([0,width]);
+    var navYScale = d3.scaleLinear().range([0, height2]);
+    var navXAxis = d3.axisBottom(navXScale);
+
     /**
      * Task 4 - Define the brush for the context graph (Navigation)
      */
+
+    var brush = d3.brushX()
+         .extent([[0, 0], [width, height2]])
+         .on("brush", brushed);
 
 
     //Setting scale parameters
     var maxDate = d3.max(data.features, function (d) { return parseDate(d.properties.Date) });
     var minDate = d3.min(data.features, function (d) { return parseDate(d.properties.Date) });
     var maxMag = d3.max(data.features, function (d) { return d.properties.EQ_PRIMARY });
-    var minMag = d3.min(data.features, function (d) { return d.properties.EQ_PRIMARY })
+    var minMag = d3.min(data.features, function (d) { return d.properties.EQ_PRIMARY });
 
     //Calculate todays date.
-    maxDate_plus = new Date(maxDate.getTime() + 300 * 144000000)
+    var maxDate_plus = new Date(maxDate.getTime() + 300 * 144000000)
 
     /**
      * Task 5 - Set the axes scales, both for focus and context.
      */
 
+    xScale.domain([minDate, maxDate_plus]);
+    yScale.domain([minMag, maxMag]);
+    navXScale.domain([minDate, maxDate_plus]);
+    navYScale.domain([minMag, maxMag]);
 
     //<---------------------------------------------------------------------------------------------------->
 
@@ -90,7 +109,7 @@ function focusPlusContext(data) {
     context.append("g")
         .attr("class", "axis axis--x")
         .attr("transform", "translate(0," + height2 + ")")
-        //here..
+        .call(navXAxis);
 
     /**
      * Task 7 - Plot the small dots on the context graph.
