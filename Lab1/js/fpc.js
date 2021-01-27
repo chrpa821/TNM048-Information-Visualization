@@ -72,7 +72,7 @@ function focusPlusContext(data) {
 
     var brush = d3.brushX()
          .extent([[0, 0], [width, height2]])
-         .on("brush", brushed);
+         .on("start end", brushed);
 
 
     //Setting scale parameters
@@ -115,8 +115,11 @@ function focusPlusContext(data) {
      * Task 7 - Plot the small dots on the context graph.
      */
     small_points = dots.selectAll("dot")
-        //here...
+        .data(data.features)
+        .enter()
+        .append("circle")
         .filter(function (d) { return d.properties.EQ_PRIMARY != null })
+        .attr("class","dotContext")
         .attr("cx", function (d) {
             return navXScale(parseDate(d.properties.Date));
         })
@@ -128,7 +131,7 @@ function focusPlusContext(data) {
       * Task 8 - Call plot function.
       * plot(points,nr,nr) try to use different numbers for the scaling.
       */
-
+    points.plot(small_points, 3, 3);
 
     //<---------------------------------------------------------------------------------------------------->
 
@@ -144,9 +147,13 @@ function focusPlusContext(data) {
      * Task 10 - Call x and y axis
      */
     focus.append("g")
-    //here..
+        .attr("class", "axis axis-x")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis);
+
     focus.append("g")
-    //here..
+        .attr("class", "axis axis-y")
+        .call(yAxis);
 
     //Add y axis label to the scatter plot
     d3.select(".legend")
@@ -253,6 +260,10 @@ function focusPlusContext(data) {
      */
 
     //here..
+    context.append("g")
+        .attr("class", "brush")
+        .call(brush)
+        .call(brush.move, xScale.range());
 
     //<---------------------------------------------------------------------------------------------------->
 
