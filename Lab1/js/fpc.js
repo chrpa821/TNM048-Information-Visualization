@@ -174,6 +174,11 @@ function focusPlusContext(data) {
      */
     selected_dots = dots.selectAll("dot")
         //here..
+        .data(data.features)
+        .enter()
+        .append("circle")
+        .attr("class", "dot")
+        .style("opacity", 0.7)
         .filter(function (d) { return d.properties.EQ_PRIMARY != null })
         .attr("cx", function (d) {
             return xScale(parseDate(d.properties.Date));
@@ -186,6 +191,7 @@ function focusPlusContext(data) {
      * Task 12 - Call plot function
      * plot(points,nr,nr) no need to send any integers!
      */
+    points.plot(selected_dots);
 
     //<---------------------------------------------------------------------------------------------------->
 
