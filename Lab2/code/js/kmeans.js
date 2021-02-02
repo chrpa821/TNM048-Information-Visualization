@@ -9,7 +9,6 @@ function kmeans(data, k) {
     //Crap we need
     var iterations = 0;
     var maxLoops = 5;
-    var iterations = 0;
     var qualityChange = 0;
     var oldqualitycheck = 0;
     var qualitycheck = 0;
@@ -59,6 +58,13 @@ function kmeans(data, k) {
 function parseData(data){
 
     var array = [];
+    for(var i = 0; i < data.length; i++){
+        var temp = []
+        for (var j in data[i]){
+            temp.push(parseFloat(data[i][j]));
+        }
+        array.push(temp);
+    }
 
     return array;
 }
@@ -72,6 +78,11 @@ function parseData(data){
 function initCentroids(data, k){
 
     //Create k centroids
+    var centroid = [];
+    for(var i = 0; i < k; i++){
+        //get random index to use as centroid
+        centroid.push(data[Math.floor(Math.random()*data.length)]);
+    }
 
     return centroid;
 }
@@ -85,6 +96,8 @@ function initCentroids(data, k){
 * @return {Array}
 */
 function assignPointsToMeans(points, means){
+
+    
 
     return assignments;
 };
