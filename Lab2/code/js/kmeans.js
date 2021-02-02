@@ -97,13 +97,17 @@ function initCentroids(data, k){
 */
 function assignPointsToMeans(points, means){
 
-    
+    var assignments = [];
+
+    for (var i = 0; i < points.lnegth; i++){
+        assignments[i] = findClosestMeanIndex(points[i], means)
+    }
 
     return assignments;
 };
 /**
  * Calculate the distance to each mean, then return the index of the closest.
- * Loop over menas and fill distance array, use euclideanDistance(point,means[i])
+ * Loop over means and fill distance array, use euclideanDistance(point,means[i])
  * return closest cluster use findIndexOfMinimum,
  * @param point
  * @param means
@@ -111,8 +115,15 @@ function assignPointsToMeans(points, means){
 */
 function findClosestMeanIndex(point, means){
 
+    var distances = [];
+
+    for (var i = 0; i < means.length; i++){
+        distances[i] = euclideanDistance(point, means[i]);
+    }
+
     return findIndexOfMinimum(distances);
 };
+
 /**
  * Euclidean distance between two points in arbitrary dimension(column/axis)
  * @param {*} point1
@@ -123,7 +134,15 @@ function findClosestMeanIndex(point, means){
 function euclideanDistance(point1, point2){
 
     if (point1.length != point2.length)
+        
         throw ("point1 and point2 must be of same dimension");
+    
+    var sum = 0;
+    //arbitrary dimension
+    for (var i = 0; i < point1.length; i++){
+        sum += (point1[i]-point2[i])*(point1[i]-point2[i])
+    }
+    sum = Math.sqrt(sum);
 
     return sum;
 
@@ -137,7 +156,19 @@ function euclideanDistance(point1, point2){
  */
 function findIndexOfMinimum(array){
 
+    if (array.length === 0) {
+        return -1;
+    }
+
+    var min = array[0];
     var index = 0;
+
+    for (var i = 1; i < array.length; i++) {
+        if (array[i] > min) {
+            index = i;
+            min = array[i];
+        }
+    }
 
     return index;
 };
