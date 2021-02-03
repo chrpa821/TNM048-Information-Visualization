@@ -190,6 +190,17 @@ function computeClusterMeans(points, assignments, k){
 
     // for each cluster
     var newMeans = [];
+    
+    for(var i = 0; i < k; i++){
+        var temp = [];
+        var n = 0;
+        for(var j = 0; j < assignments.length; j++){
+            if(assignments[j] = i){
+                temp[n] = points[j];
+            } 
+        }
+        if(temp.length > 0) newMeans[i] = averagePosition(temp);
+    }
 
     return newMeans;
 };
