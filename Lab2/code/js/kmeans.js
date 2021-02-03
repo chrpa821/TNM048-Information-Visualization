@@ -26,6 +26,7 @@ function kmeans(data, k) {
     //Task 4.2 - Assign each point to the closest mean.
     clusterIndexPerPoint = assignPointsToMeans(new_array, centroid);
 
+
     //Master loop -- Loop until quality is good
     do {
         //Task 4.3 - Compute mean of each cluster
@@ -34,10 +35,20 @@ function kmeans(data, k) {
         var clusterIndexPerPoint = assignPointsToMeans(new_array, centroid);
 
         //Task 4.4 - Do a quality check for current result
+        oldqualitycheck = qualitycheck;
+
         qualitycheck = qualityCheck(centroid,new_array,clusterIndexPerPoint);
 
-        //End the loop if...
+        //iterations++;
+        
 
+        qualityChange = Math.abs(qualitycheck - oldqualitycheck);
+        //End the loop if...
+        if(qualityChange < 0.0000000001) converge = true;
+
+       
+        //if (iterations >= maxLoops) converge = true;
+        //console.log(iterations);
     }
     while (converge == false)
     //Return results
@@ -99,8 +110,8 @@ function assignPointsToMeans(points, means){
 
     var assignments = [];
 
-    for (var i = 0; i < points.lnegth; i++){
-        assignments[i] = findClosestMeanIndex(points[i], means)
+    for (var i = 0; i < points.length; i++){
+        assignments.push(findClosestMeanIndex(points[i], means));
     }
 
     return assignments;
@@ -118,7 +129,7 @@ function findClosestMeanIndex(point, means){
     var distances = [];
 
     for (var i = 0; i < means.length; i++){
-        distances[i] = euclideanDistance(point, means[i]);
+        distances.push(euclideanDistance(point, means[i]));
     }
 
     return findIndexOfMinimum(distances);
@@ -140,7 +151,7 @@ function euclideanDistance(point1, point2){
     var sum = 0;
     //arbitrary dimension
     for (var i = 0; i < point1.length; i++){
-        sum += (point1[i]-point2[i])*(point1[i]-point2[i])
+        sum += (point1[i]-point2[i])*(point1[i]-point2[i]);
     }
     sum = Math.sqrt(sum);
 
@@ -156,15 +167,11 @@ function euclideanDistance(point1, point2){
  */
 function findIndexOfMinimum(array){
 
-    if (array.length === 0) {
-        return -1;
-    }
-
     var min = array[0];
     var index = 0;
 
     for (var i = 1; i < array.length; i++) {
-        if (array[i] > min) {
+        if (array[i] < min) {
             index = i;
             min = array[i];
         }
@@ -191,12 +198,13 @@ function computeClusterMeans(points, assignments, k){
     // for each cluster
     var newMeans = [];
     
+    //cluster i
     for(var i = 0; i < k; i++){
         var temp = [];
-        var n = 0;
+        //loop over assignment
         for(var j = 0; j < assignments.length; j++){
-            if(assignments[j] = i){
-                temp[n] = points[j];
+            if(assignments[j] == i){
+                temp.push(points[j]);
             } 
         }
         if(temp.length > 0) newMeans[i] = averagePosition(temp);
@@ -214,6 +222,19 @@ function computeClusterMeans(points, assignments, k){
  * @param {*} clusterIndexPerPoint
  */
 function qualityCheck(centroid, new_array, clusterIndexPerPoint){
+    var qualitycheck = 0;
+
+    //loop over centroids
+    for(var i = 0; i < centroid.length; i++){
+        for(var j = 0; j < new_array.length; j++){
+            if(clusterIndexPerPoint[j] == i){
+                for(var k = 0; k < centroid[0].length; k++){
+                    qualitycheck += Math.pow(euclideanDistance(new_array[j][k], centroid[i][k]), 2.0);
+                }
+            }
+        }
+    }
+
     return qualitycheck;
 }
 
